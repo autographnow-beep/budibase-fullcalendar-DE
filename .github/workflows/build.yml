@@ -1,0 +1,29 @@
+name: Build Budibase Plugin
+on: [push, workflow_dispatch] # Baut bei jedem Speichern oder manuell
+
+jobs:
+  build-plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build Plugin
+        run: npm run build
+
+      - name: Pack Plugin
+        run: tar -czf budibase-plugin.tar.gz package.json schema.json dist
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: fertiges-plugin
+          path: budibase-plugin.tar.gz
